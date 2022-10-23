@@ -1,5 +1,5 @@
-Here you can say lots of fun things about your site.
+Hi! I'm Carter, a sophomore at the University of Washington. I'm studying Computer Science with a focus on ML/Deep Learning. I'm part of the UW's State Academic RedShirt Program (STARS), giving me strong math fundamentals and experience working within my cohort!
 
-Maybe say a some things about yourself.
+I've been self-learning ML/Deep Learning for the past two years, working through personal projects and online courses including Stanford's CS231n, CS50x AI, and fast.ai. Some of the personal projects include: a simulation of Reddit communities using GPT-2, a Discord bot which summarizes past messages, and a game where users must spot a real vs AI generated tweet! (I'll be sure to link to these projects as I upload them.)
 
-Or maybe what you plan to blog about.
+This blog is meant to record my learnings and ideas as well as (hopefully) explaining concepts that I found difficult when starting with ML! Feel free to get in touch with me using my contact info in the footer!
