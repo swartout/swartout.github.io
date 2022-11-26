@@ -115,4 +115,4 @@ Now, where does this embedding matrix come from? Typically, there are two option
 
 ## Stay tuned for Part 2!
 
-\- Carter Swartout
+\- carter
