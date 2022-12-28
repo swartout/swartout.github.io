@@ -1,5 +1,7 @@
 # An Intuitive Explanation of GPT Models - Part 2
 
+## WORK IN PROGRESS
+
 Last time we left off with the general understanding of what GPT is and how information *enters* the model.
 
 ![outside view](/assets/GPT/GPT_00028.jpg)
@@ -130,11 +132,20 @@ Here we can see the generated query, key, and value matricies - all with the sam
 
 If we recall back before matrix-land, the next step in psudocode roughly is:
 
-```
+```text
 for query in query:
     for word in words:
         # score word to query using dot product
         words score for the query = word.key (dot product) query
 ```
 
-If we wanted to take the score for the `i'th` word's key with respect to the `j'th` word's query, we would take the dot product of the two. We can 
+If we wanted to take the score for the `i'th` word's key with respect to the `j'th` word's query, we would take the dot product of the two. This can still be done using the query and key matrices. All we need to do is take the dot product of the `i'th` row in the `keys` matrix and the `j'th` row in the `queries` matrix.
+
+We could do this for each `queries` row, with regards to each `keys` row. However, there's an easier way! If we take the matrix multiplication of `queries` and `keys` (transposed), we get a `scores` matrix with shape `(T, T)`. This holds the results of the dot product of each word's query to each word's key. (Note: the "@" operator commonly represents the matrix multiplication operation).
+
+In this new `scores` matrix, the `i'th` row is the scores for each word, compared to the `i'th` word's query. As well, the element at `(i, j)` is the score for the `j'th` word's key compared to the `i'th` word's query.
+
+Now that we have all of these scores neatly tucked into a matrix, we can continue!
+
+![scale and normalize the scores](/assets/GPT/GPT_00052.jpg)
+
