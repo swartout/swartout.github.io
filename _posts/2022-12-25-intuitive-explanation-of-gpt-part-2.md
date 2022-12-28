@@ -1,6 +1,6 @@
 # An Intuitive Explanation of GPT Models - Part 2
 
-Last time we left off at what GPT generally is and what type of information *enters* the model.
+Last time we left off with the general understanding of what GPT is and how information *enters* the model.
 
 ![outside view](/assets/GPT/GPT_00028.jpg)
 
@@ -50,3 +50,91 @@ We give each word a **key**, an identifier to what it represents. These then all
 
 ![values are now added](/assets/GPT/GPT_00038.jpg)
 
+Now that we have similarity scores for how much "He" is influenced by words (including itself), we just have to figure out what that means - quite literally. We give each word a **value**, what the word represents. The difference between a word itself and it's **value** is less clear-cut with examples. One can think of it as what a word could mean to other words, not necessarily it's true self. Finally, the meaning of "He" could be found by combining all of the **values** *with respect to* their **scores** (eg. "Carter" has a high **score**, so his **value** would influence the outcome of "He" more than "was", which has a low **score**).
+
+![final for he](/assets/GPT/GPT_00039.jpg)
+
+To figure out the meaning of any other word we could do the same process. Create a **query** for the word we are trying to find the meaning of, compare the **query** to each word's **key**, resulting in a **score**. Then, combine each word's **value** with respect to the word's **score** to get the meaning!
+
+![explanation](/assets/GPT/GPT_00040.jpg)
+
+(Note: this is difficult and this real-world explanation might not make sense. If so, I'd reccommend reading Jay Alammar's excelent [analogy](https://jalammar.github.io/illustrated-gpt2/) using manila folders and values.)
+
+### Math Version
+
+Guess what? We can do the same thing using a whole lot of vectors! For the moment, ignore how the vectors are created! We'll get to that soon!
+
+![we can do the same using vectors](/assets/GPT/GPT_00042.jpg)
+
+Translated into vector-land, we first create a query, key, and value vector for each word. To find the representation (or transformation) of one word, we use that word's query.
+
+![score vector](/assets/GPT/GPT_00043.jpg)
+
+The scalar similarity score for a word is the result of the dot product of the word's key vector and the query vector. This gives us a score for each word.
+
+![sum up](/assets/GPT/GPT_00044.jpg)
+
+We then normalize the scores such that they sum to one (softmax). Finally, we multiply each word's value vector by it's respective score. Sum these results and we are left with the transformed word!
+
+### Vector Creation
+
+Let's return to the important detail we glossed over - how are these vectors created?
+
+![vector creation](/assets/GPT/GPT_00045.jpg)
+
+We use key, value, and query weight matrices to create an individual key, value, and query vector for each word. These key, value, and query vectors are of length `d_key`. I'll get to how the size `d_key` is found in a minute - for now we can assume it is the same length as `d_model`. As word vectors throughout the model are of size `d_model`, the weight matrices dimensions are: `(d_dmodel, d_key)`.
+
+![Matrix multiplication for keys](/assets/GPT/GPT_00046.jpg)
+
+Thus, when we matrix multiply a word vector by a weight matrix, we result in a vector of size `d_key`. We create these query, key, and value vectors for each word vector.
+
+Then, we need to score all words in relation to a query. Note that we will compare *all* words to *all* queries - I'm walking through comparing *all* words to only *one* query for demonstrations sake. The query for "He" has to be compared to all words, as does the query for "The", "club", and so on.
+
+![scoring all words in relation to a query](/assets/GPT/GPT_00047.jpg)
+
+To score all words **keys** in relation to one **query**, we take the dot product of a word's **key** and the **query** to obtain a scalar **score**. Note that we are still using one query - "He"s in the example below - to compare to *all* word's keys.
+
+Eg. the score for the word "club" in relation to "He"s query is the dot product of the the *key for "club"* and the *query for "He"*.
+
+To normalize all the scores, we take the softmax of them. This just compresses each score between 0 and 1, while ensuring they all sum to 1. (Read more about the softmax function [here](https://towardsdatascience.com/softmax-activation-function-how-it-actually-works-d292d335bd78))
+
+![getting the final vector](/assets/GPT/GPT_00048.jpg)
+
+We're almost there! Next, we multiply each word's **value** vector by it's respective **score**. We can think of this step as weighting each word's **value** vector by how much it is related/matters, it's scalar score.
+
+Finally, we sum all of the weighted value vectors, into one final vector of length `d_key`. As I mentioned, we should currently assume `d_key` is the same as `d_model`. Thus, we have *transformed* the original "He" vector into a new one! We would do these 
+
+There are some things that I've skipped over, but we've gotten past the hard part! Congrats!
+
+# Matrix Form
+
+These previous operations can be efficiently and compactly using tensors and matrix multiplication.
+
+![matrix attention overview](/assets/GPT/GPT_00049.jpg)
+
+We can represent the input to the masked self-attention layer as a tensor (higher dimensional matrix) with shape: `(batch_size, sequence_len, d_model)`. `batch_size` is the number of sequences (sentences/phrases) in the batch. (If you don't know what a "batch" is, we group multiple sequences for efficency. You can read about it [here](https://stats.stackexchange.com/questions/153531/what-is-batch-size-in-neural-network)). `sequence_len` is the length of the sequence or sentence (the largest length in the batch - we would need to pad other sequences to the same length). We already know what `d_model` is! We get this tensor by making the word vectors in a sequence just one matrix (stacking all of the vectors together).
+
+After passing this input through the masked self-attention, the output will have the same shape: `(batch_size, sequence_len, d_model)`.
+
+We're going to ignore the batch dimension for this walkthrough, as it stays constant throughout. Let's take a peek at how queries, keys, and values are created.
+
+![generating queries, keys, and values](/assets/GPT/GPT_00050.jpg)
+
+Instead of having individual query, key, and value vectors for each word, we have a query, key, and value matrix for the sequence. In the above slide, I used `T` instead of `sequence_len` and `dk` instead of `d_key`. They're the same thing.
+
+Taking the matrix multiplication of the input matrix, `(T, d_model)`, and the query weight matrix, `(d_model, dk)`, we result in a query matrix of shape `(T, dk)`. Note that this is the same as using individual vectors - here the vectors are stacked on top of each other. The key vector for the second word would be the second row of the key matrix, so on for other words/matrices.
+
+Here we can see the generated query, key, and value matricies - all with the same shape.
+
+![get scores for all of the words](/assets/GPT/GPT_00051.jpg)
+
+If we recall back before matrix-land, the next step in psudocode roughly is:
+
+```
+for query in query:
+    for word in words:
+        # score word to query using dot product
+        words score for the query = word.key (dot product) query
+```
+
+If we wanted to take the score for the `i'th` word's key with respect to the `j'th` word's query, we would take the dot product of the two. We can 
