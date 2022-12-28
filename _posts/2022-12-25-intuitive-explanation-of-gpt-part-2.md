@@ -136,7 +136,7 @@ If we recall back before matrix-land, the next step in psudocode roughly is:
 for query in query:
     for word in words:
         # score word to query using dot product
-        words score for the query = word.key (dot product) query
+        word's score for the query = word's key (dot product) query
 ```
 
 If we wanted to take the score for the `i'th` word's key with respect to the `j'th` word's query, we would take the dot product of the two. This can still be done using the query and key matrices. All we need to do is take the dot product of the `i'th` row in the `keys` matrix and the `j'th` row in the `queries` matrix.
@@ -149,3 +149,4 @@ Now that we have all of these scores neatly tucked into a matrix, we can continu
 
 ![scale and normalize the scores](/assets/GPT/GPT_00052.jpg)
 
+At this point, we need to normalize the scores.
