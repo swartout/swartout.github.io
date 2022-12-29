@@ -6,15 +6,15 @@ Last time we left off with the general understanding of what GPT is and how info
 
 ![outside view](/assets/GPT/GPT_00028.jpg)
 
-In this post we'll go over what happens *inside* it, detailing the seemingly ever-present attenton mechanism. I'll start with explaining concepts using intuitive ideas, gradually building up to an understanding of attention mechanically.
+In this post we'll go over what happens *inside* it, detailing the seemingly ever-present attention mechanism. I'll start with explaining concepts using intuitive ideas, gradually building up to an understanding of attention mechanically.
 
 Here we can view the token embeddings (we know what these are!) entering the model and output probabilities exiting it. Let's take a peek inside the box.
 
 ![outside view](/assets/GPT/GPT_00029.jpg)
 
-The internals of a GPT model are relativley simple - repeated "transformer decoder" blocks, finally followed by a linear layer. The linear layer is self-explanatory and we can look at it later. For now, let's examine one of these mystical "transfomer decoder" blocks.
+The internals of a GPT model are relatively simple - repeated "transformer decoder" blocks, finally followed by a linear layer. The linear layer is self-explanatory and we can look at it later. For now, let's examine one of these mystical "transformer decoder" blocks.
 
-![inside transfomer decoder](/assets/GPT/GPT_00031.jpg)
+![inside transformer decoder](/assets/GPT/GPT_00031.jpg)
 
 The block is comprised of two parts: masked self-attention, and a linear layer (feed forward neural network). Each block has the same structure (or architecture), but will contain different valued weights. For now, let's only consider the "masked self-attention" in a conceptual manner. We'll bring it back to implementation in a moment.
 
@@ -60,7 +60,7 @@ To figure out the meaning of any other word we could do the same process. Create
 
 ![explanation](/assets/GPT/GPT_00040.jpg)
 
-(Note: this is difficult and this real-world explanation might not make sense. If so, I'd reccommend reading Jay Alammar's excelent [analogy](https://jalammar.github.io/illustrated-gpt2/) using manila folders and values.)
+(Note: this is difficult and this real-world explanation might not make sense. If so, I'd recommend reading Jay Alammar's excellent [analogy](https://jalammar.github.io/illustrated-gpt2/) using manila folders and values.)
 
 ### Math Version
 
@@ -84,7 +84,7 @@ Let's return to the important detail we glossed over - how are these vectors cre
 
 ![vector creation](/assets/GPT/GPT_00045.jpg)
 
-We use key, value, and query weight matrices to create an individual key, value, and query vector for each word. These key, value, and query vectors are of length `d_key`. I'll get to how the size `d_key` is found in a minute - for now we can assume it is the same length as `d_model`. As word vectors throughout the model are of size `d_model`, the weight matrices dimensions are: `(d_dmodel, d_key)`.
+We use key, value, and query weight matrices to create an individual key, value, and query vector for each word. These key, value, and query vectors are of length `d_key`. I'll get to how the size `d_key` is found in a minute - for now we can assume it is the same length as `d_model`. As word vectors throughout the model are of size `d_model`, the weight matrices dimensions are: `(d_model, d_key)`.
 
 ![Matrix multiplication for keys](/assets/GPT/GPT_00046.jpg)
 
@@ -114,11 +114,11 @@ These previous operations can be efficiently and compactly using tensors and mat
 
 ![matrix attention overview](/assets/GPT/GPT_00049.jpg)
 
-We can represent the input to the masked self-attention layer as a tensor (higher dimensional matrix) with shape: `(batch_size, sequence_len, d_model)`. `batch_size` is the number of sequences (sentences/phrases) in the batch. (If you don't know what a "batch" is, we group multiple sequences for efficency. You can read about it [here](https://stats.stackexchange.com/questions/153531/what-is-batch-size-in-neural-network)). `sequence_len` is the length of the sequence or sentence (the largest length in the batch - we would need to pad other sequences to the same length). We already know what `d_model` is! We get this tensor by making the word vectors in a sequence just one matrix (stacking all of the vectors together).
+We can represent the input to the masked self-attention layer as a tensor (higher dimensional matrix) with shape: `(batch_size, sequence_len, d_model)`. `batch_size` is the number of sequences (sentences/phrases) in the batch. (If you don't know what a "batch" is, we group multiple sequences for efficiency. You can read about it [here](https://stats.stackexchange.com/questions/153531/what-is-batch-size-in-neural-network)). `sequence_len` is the length of the sequence or sentence (the largest length in the batch - we would need to pad other sequences to the same length). We already know what `d_model` is! We get this tensor by making the word vectors in a sequence just one matrix (stacking all of the vectors together).
 
 After passing this input through the masked self-attention, the output will have the same shape: `(batch_size, sequence_len, d_model)`.
 
-We're going to ignore the batch dimension for this walkthrough, as it stays constant throughout. Let's take a peek at how queries, keys, and values are created.
+We're going to ignore the batch dimension for this walk-through, as it stays constant throughout. Let's take a peek at how queries, keys, and values are created.
 
 ![generating queries, keys, and values](/assets/GPT/GPT_00050.jpg)
 
@@ -126,11 +126,11 @@ Instead of having individual query, key, and value vectors for each word, we hav
 
 Taking the matrix multiplication of the input matrix, `(T, d_model)`, and the query weight matrix, `(d_model, dk)`, we result in a query matrix of shape `(T, dk)`. Note that this is the same as using individual vectors - here the vectors are stacked on top of each other. The key vector for the second word would be the second row of the key matrix, so on for other words/matrices.
 
-Here we can see the generated query, key, and value matricies - all with the same shape.
+Here we can see the generated query, key, and value matrices - all with the same shape.
 
 ![get scores for all of the words](/assets/GPT/GPT_00051.jpg)
 
-If we recall back before matrix-land, the next step in psudocode roughly is:
+If we recall back before matrix-land, the next step in pseudocode roughly is:
 
 ```text
 for query in query:
@@ -151,7 +151,7 @@ Now that we have all of these scores neatly tucked into a matrix, we can continu
 
 At this point, we need to normalize the scores. There are two steps here:
 
-First, we divide all scores by `sqrt(dk)`. This is done because the **varience** of the dot product of two random vectors (which is what matrix multiplication is composed of) **increases** with respect to the length of the vectors. To counteract this increasing variance, we divide all the scores by the square of the vector's length, `sqrt(dk)`. I'll get to why we'd want to do this in a moment - for now, onto softmax.
+First, we divide all scores by `sqrt(dk)`. This is done because the **variance** of the dot product of two random vectors (which is what matrix multiplication is composed of) **increases** with respect to the length of the vectors. To counteract this increasing variance, we divide all the scores by the square of the vector's length, `sqrt(dk)`. I'll get to why we'd want to do this in a moment - for now, onto softmax.
 
 As we recall, the softmax function squishes all values between zero and one, such that the sum of the values adds up to one. We do this so that when we sum up the normalized value vectors, the multiplier adds up to one. Because of this, it wouldn't make sense to take the softmax of the entire scores matrix once. Instead, we want to take the softmax along the first dimension (one-indexed) - on each row in the matrix (the rows correspond to a singular query and every key). For people who use PyTorch, that'll look like this:
 
@@ -159,7 +159,7 @@ As we recall, the softmax function squishes all values between zero and one, suc
 F.softmax(scores, dim=0)
 ```
 
-Now that we've covered the softmax step, let's take a step back to the division by `sqrt(dk)`. (Note: if this reasoning is unclear, feel free to skip to the next slide.) Some readers might look at what I wrote and wonder: "Carter, if we're just going to take the softmax next anyways, why would we need to scale it? Why do we care about the varience?" Well, the reason why the variance is important is because the softmax function has more peaky vs. sparse results when the varience is greater. Consider the following example:
+Now that we've covered the softmax step, let's take a step back to the division by `sqrt(dk)`. (Note: if this reasoning is unclear, feel free to skip to the next slide.) Some readers might look at what I wrote and wonder: "Carter, if we're just going to take the softmax next anyways, why would we need to scale it? Why do we care about the variance?" Well, the reason why the variance is important is because the softmax function has more peaky vs. sparse results when the variance is greater. Consider the following example:
 
 ```python
 F.softmax([-1, 0, 1]) = [0.0900, 0.2447, 0.6652]
@@ -167,7 +167,7 @@ F.softmax([-10., 0., 10.]) = [2.0611e-09, 4.5398e-05, 9.9995e-01]
 F.softmax([-100., 0., 100.]) = [0.0000e+00, 3.7835e-44, 1.0000e+00]
 ```
 
-As the varience increases, the results from the softmax function are more "peaky", meaning they tend to have one value close to one and others close to zero (as opposed to all values being more equal). This is detrimental because it means that the gradient, which is necessary for gradient-based optimization, "vanishes" to be tiny (bad). This makes it much more difficult for the network to learn. In other words, the gradient is "how sensitive the output is to small changes to the input." Because the output of the softmax wouldn't change much, say if `-10` was changed to `-9`, the network doesn't know how to improve.
+As the variance increases, the results from the softmax function are more "peaky", meaning they tend to have one value close to one and others close to zero (as opposed to all values being more equal). This is detrimental because it means that the gradient, which is necessary for gradient-based optimization, "vanishes" to be tiny (bad). This makes it much more difficult for the network to learn. In other words, the gradient is "how sensitive the output is to small changes to the input." Because the output of the softmax wouldn't change much, say if `-10` was changed to `-9`, the network doesn't know how to improve.
 
 ![full matrix attention](/assets/GPT/GPT_00053.jpg)
 
@@ -183,9 +183,9 @@ The general idea of multi-headed attention is to allow multiple attention operat
 
 Previously, our key, value, and query matrices would all be pumped into one attention function.
 
-![multi-head attenion](/assets/GPT/GPT_00055.jpg)
+![multi-head attention](/assets/GPT/GPT_00055.jpg)
 
-Multi-headed attenion instead splits up the query, key, and value matrices into `h` number of smaller matrices.
+Multi-headed attention instead splits up the query, key, and value matrices into `h` number of smaller matrices.
 
 ![multi-head attention demonstration](/assets/GPT/GPT_00056.jpg)
 
@@ -203,17 +203,17 @@ We then concatenate the head outputs into one tensor of shape `(h, T, d_model / 
 
 ![self-attention block](/assets/GPT/GPT_00061.jpg)
 
-We're almost done! Now that we have a good idea how masked self-attention works, all that's left in a decoder block is the feed-forward neural net. This is just two linar layers with a nonlinearity in between (the width of the layers is a hyperparameter one can choose).
+We're almost done! Now that we have a good idea how masked self-attention works, all that's left in a decoder block is the feed-forward neural net. This is just two linac layers with a nonlinearity in between (the width of the layers is a hyperparameter one can choose).
 
 This block is what's repeated throughout GPT - getting this means you're almost the entire way there to understanding the architecture!
 
 There's just two finishing points I'd like to make:
 
-1) Instead of computing the output of each head and then concatenating them, this whole opeation can efficiently be done using - you guessed it - matrix multiplication and reshaping. This process is left as an excercise to the reader (or [Google](https://github.com/karpathy/minGPT/blob/master/mingpt/model.py) it).
+1) Instead of computing the output of each head and then concatenating them, this whole operation can efficiently be done using - you guessed it - matrix multiplication and reshaping. This process is left as an exercise to the reader (or [Google](https://github.com/karpathy/minGPT/blob/master/mingpt/model.py) it).
 
 2) I skipped over the "masked" part of masked self-attention. I'll explain why it's important and how it works in the next post. If you want to read about it now, I'd recommend [
 The Annotated Transformer](https://nlp.seas.harvard.edu/annotated-transformer/#decoder).
 
-Thank you for spending your time reading this - I appriciate it! Stay turned for Part 3!
+Thank you for spending your time reading this - I appreciate it! Stay turned for Part 3!
 
 -Carter
