@@ -10,7 +10,7 @@ Hi all! In this first-of-a-series post, I'll be covering one of the most influen
 
 When I was learning how Transformers and GPT worked, I found it helpful to develop an intuitive feel for the way the model operates, then dive deeper into the specific implementation. I'll be following that same approach here.
 
-While these human representations do not perfectly capture the reasons and workings of GPT, these heuristics aid inital understanding. I believe it is a worthwhile trade to make. As one grows more confident in their understanding, they can discard the human abstractions as they please.
+While these human representations do not perfectly capture the reasons and workings of GPT, these heuristics aid initial understanding. I believe it is a worthwhile trade to make. As one grows more confident in their understanding, they can discard the human abstractions as they please.
 
 ### What is GPT?
 
@@ -59,7 +59,7 @@ As we've discussed before, GPT generates text by taking in an input prompt and o
 
 ![GPT autoregessive](/assets/GPT/GPT_00017.jpg)
 
-Let's strip away the very first layer of abstaction. GPT doesn't quite output a prediction for the next word, but probabilities of which word will be next.
+Let's strip away the very first layer of abstraction. GPT doesn't quite output a prediction for the next word, but probabilities of which word will be next.
 
 ![GPT probabilities](/assets/GPT/GPT_00018.jpg)
 
@@ -113,6 +113,6 @@ Where do these weights come from? They're rows in a large embedding matrix, of s
 
 Now, where does this embedding matrix come from? Typically, there are two options. First, it could be learned while training the overall model. Second, and often more practically, we use "pre-trained" weights. These are just weights that have been already learned by others.
 
-## Stay tuned for Part 2!
+### Here's [Part Two](https://cswartout.com/2022/12/25/intuitive-explanation-of-gpt-part-2.html)
 
 \- carter

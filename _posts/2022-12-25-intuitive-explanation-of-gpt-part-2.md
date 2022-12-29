@@ -1,7 +1,5 @@
 # An Intuitive Explanation of GPT Models - Part 2
 
-## ROUGH DRAFT
-
 Last time we left off with the general understanding of what GPT is and how information *enters* the model.
 
 ![outside view](/assets/GPT/GPT_00028.jpg)
@@ -104,7 +102,7 @@ To normalize all the scores, we take the softmax of them. This just compresses e
 
 We're almost there! Next, we multiply each word's **value** vector by its respective **score**. We can think of this step as weighting each word's **value** vector by how much it is related/matters, its scalar score.
 
-Finally, we sum all of the weighted value vectors, into one final vector of length `d_key`. As I mentioned, we should currently assume `d_key` is the same as `d_model`. Thus, we have *transformed* the original "He" vector into a new one! We would do these 
+Finally, we sum all of the weighted value vectors, into one final vector of length `d_key`. As I mentioned, we should currently assume `d_key` is the same as `d_model`. Thus, we have *transformed* the original "He" vector into a new one! We would do this for each query, transforming each word.
 
 There are some things that I've skipped over, but we've gotten past the hard part! Congrats!
 
