@@ -1,5 +1,7 @@
 # An Intuitive Explanation of GPT Models - Part 2
 
+### Read [Part One!](https://cswartout.com/2022/11/25/intutive-explanation-of-gpt.html)
+
 Last time we left off with the general understanding of what GPT is and how information *enters* the model.
 
 ![outside view](/assets/GPT/GPT_00028.jpg)
