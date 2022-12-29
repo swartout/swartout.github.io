@@ -1,12 +1,12 @@
 # An Intuitive Explanation of GPT Models - Part 2
 
-## WORK IN PROGRESS
+## ROUGH DRAFT
 
 Last time we left off with the general understanding of what GPT is and how information *enters* the model.
 
 ![outside view](/assets/GPT/GPT_00028.jpg)
 
-In this post we'll go over what happens *inside* it, detailing the seemingly ever-present attenton mechanism.
+In this post we'll go over what happens *inside* it, detailing the seemingly ever-present attenton mechanism. I'll start with explaining concepts using intuitive ideas, gradually building up to an understanding of attention mechanically.
 
 Here we can view the token embeddings (we know what these are!) entering the model and output probabilities exiting it. Let's take a peek inside the box.
 
@@ -52,7 +52,7 @@ We give each word a **key**, an identifier to what it represents. These then all
 
 ![values are now added](/assets/GPT/GPT_00038.jpg)
 
-Now that we have similarity scores for how much "He" is influenced by words (including itself), we just have to figure out what that means - quite literally. We give each word a **value**, what the word represents. The difference between a word itself and it's **value** is less clear-cut with examples. One can think of it as what a word could mean to other words, not necessarily it's true self. Finally, the meaning of "He" could be found by combining all of the **values** *with respect to* their **scores** (eg. "Carter" has a high **score**, so his **value** would influence the outcome of "He" more than "was", which has a low **score**).
+Now that we have similarity scores for how much "He" is influenced by words (including itself), we just have to figure out what that means - quite literally. We give each word a **value**, what the word represents. The difference between a word itself and its **value** is less clear-cut with examples. One can think of it as what a word could mean to other words, not necessarily its true self. Finally, the meaning of "He" could be found by combining all of the **values** *with respect to* their **scores** (eg. "Carter" has a high **score**, so his **value** would influence the outcome of "He" more than "was", which has a low **score**).
 
 ![final for he](/assets/GPT/GPT_00039.jpg)
 
@@ -76,7 +76,7 @@ The scalar similarity score for a word is the result of the dot product of the w
 
 ![sum up](/assets/GPT/GPT_00044.jpg)
 
-We then normalize the scores such that they sum to one (softmax). Finally, we multiply each word's value vector by it's respective score. Sum these results and we are left with the transformed word!
+We then normalize the scores such that they sum to one (softmax). Finally, we multiply each word's value vector by its respective score. Sum these results and we are left with the transformed word!
 
 ### Vector Creation
 
@@ -102,7 +102,7 @@ To normalize all the scores, we take the softmax of them. This just compresses e
 
 ![getting the final vector](/assets/GPT/GPT_00048.jpg)
 
-We're almost there! Next, we multiply each word's **value** vector by it's respective **score**. We can think of this step as weighting each word's **value** vector by how much it is related/matters, it's scalar score.
+We're almost there! Next, we multiply each word's **value** vector by its respective **score**. We can think of this step as weighting each word's **value** vector by how much it is related/matters, its scalar score.
 
 Finally, we sum all of the weighted value vectors, into one final vector of length `d_key`. As I mentioned, we should currently assume `d_key` is the same as `d_model`. Thus, we have *transformed* the original "He" vector into a new one! We would do these 
 
@@ -149,4 +149,71 @@ Now that we have all of these scores neatly tucked into a matrix, we can continu
 
 ![scale and normalize the scores](/assets/GPT/GPT_00052.jpg)
 
-At this point, we need to normalize the scores.
+At this point, we need to normalize the scores. There are two steps here:
+
+First, we divide all scores by `sqrt(dk)`. This is done because the **varience** of the dot product of two random vectors (which is what matrix multiplication is composed of) **increases** with respect to the length of the vectors. To counteract this increasing variance, we divide all the scores by the square of the vector's length, `sqrt(dk)`. I'll get to why we'd want to do this in a moment - for now, onto softmax.
+
+As we recall, the softmax function squishes all values between zero and one, such that the sum of the values adds up to one. We do this so that when we sum up the normalized value vectors, the multiplier adds up to one. Because of this, it wouldn't make sense to take the softmax of the entire scores matrix once. Instead, we want to take the softmax along the first dimension (one-indexed) - on each row in the matrix (the rows correspond to a singular query and every key). For people who use PyTorch, that'll look like this:
+
+```python
+F.softmax(scores, dim=0)
+```
+
+Now that we've covered the softmax step, let's take a step back to the division by `sqrt(dk)`. (Note: if this reasoning is unclear, feel free to skip to the next slide.) Some readers might look at what I wrote and wonder: "Carter, if we're just going to take the softmax next anyways, why would we need to scale it? Why do we care about the varience?" Well, the reason why the variance is important is because the softmax function has more peaky vs. sparse results when the varience is greater. Consider the following example:
+
+```python
+F.softmax([-1, 0, 1]) = [0.0900, 0.2447, 0.6652]
+F.softmax([-10., 0., 10.]) = [2.0611e-09, 4.5398e-05, 9.9995e-01]
+F.softmax([-100., 0., 100.]) = [0.0000e+00, 3.7835e-44, 1.0000e+00]
+```
+
+As the varience increases, the results from the softmax function are more "peaky", meaning they tend to have one value close to one and others close to zero (as opposed to all values being more equal). This is detrimental because it means that the gradient, which is necessary for gradient-based optimization, "vanishes" to be tiny (bad). This makes it much more difficult for the network to learn. In other words, the gradient is "how sensitive the output is to small changes to the input." Because the output of the softmax wouldn't change much, say if `-10` was changed to `-9`, the network doesn't know how to improve.
+
+![full matrix attention](/assets/GPT/GPT_00053.jpg)
+
+Once we have the softmaxed scores, we can matrix multiply them with the values. This does the weight values and then sum them in one step, for all queries. We are then left with our *transformed* word matrix of the same shape as the original: `(T, dk)`.
+
+![small formula for self-attention](/assets/GPT/GPT_00054.jpg)
+
+This entire self-attention operation is then neatly represented in the above self-attention formula! 
+
+### Multi-Headed Attention
+
+The general idea of multi-headed attention is to allow multiple attention operations over different parts of the vector subspace. This allows GPT to represent different parts of meaning in different ways - allowing greater understanding. Let's take a look at how this is done:
+
+Previously, our key, value, and query matrices would all be pumped into one attention function.
+
+![multi-head attenion](/assets/GPT/GPT_00055.jpg)
+
+Multi-headed attenion instead splits up the query, key, and value matrices into `h` number of smaller matrices.
+
+![multi-head attention demonstration](/assets/GPT/GPT_00056.jpg)
+
+These matrices are split up along the `dk` dimension, not the `T` dimension. This means that each head matrix for the query, key, or value has shape: `(T, d_model / h)`. Note that each head still has a row for each word in the sequence, but the second dimension refers to a smaller part of the word's subspace.
+
+We now have `h` key, value, and query matrices. The first "head" is the group of the first key, value, and query matrix. The second is the group of the second key, query, and value matrix (and so on).
+
+![self attention using heads](/assets/GPT/GPT_00058.jpg)
+
+We now conduct self-attention on each head. We do this by running the key, value, and query matrices for each head through the self-attention formula we found above. The output shapes for each head are the same size as the inputs, `(T, d_model / h)`. We now have `h` of these head-outputs.
+
+![concatenate the head outputs](/assets/GPT/GPT_00060.jpg)
+
+We then concatenate the head outputs into one tensor of shape `(h, T, d_model / h)`. We reshape this tensor into: `(T, d_model)`. Finally, we run this through (matrix multiplication) a linear layer with shape: `(d_model, d_model)`. This leaves us with out (super!) transformed output of the input sequence!
+
+![self-attention block](/assets/GPT/GPT_00061.jpg)
+
+We're almost done! Now that we have a good idea how masked self-attention works, all that's left in a decoder block is the feed-forward neural net. This is just two linar layers with a nonlinearity in between (the width of the layers is a hyperparameter one can choose).
+
+This block is what's repeated throughout GPT - getting this means you're almost the entire way there to understanding the architecture!
+
+There's just two finishing points I'd like to make:
+
+1) Instead of computing the output of each head and then concatenating them, this whole opeation can efficiently be done using - you guessed it - matrix multiplication and reshaping. This process is left as an excercise to the reader (or [Google](https://github.com/karpathy/minGPT/blob/master/mingpt/model.py) it).
+
+2) I skipped over the "masked" part of masked self-attention. I'll explain why it's important and how it works in the next post. If you want to read about it now, I'd recommend [
+The Annotated Transformer](https://nlp.seas.harvard.edu/annotated-transformer/#decoder).
+
+Thank you for spending your time reading this - I appriciate it! Stay turned for Part 3!
+
+-Carter
