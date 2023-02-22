@@ -1,7 +1,13 @@
-# What is this notebook?
-Hugging Face is a popular library and resouce for training and using AI models. While it has many valuable resources, it can be extremely difficult to use. This notebook aims to serve as an introduction to Hugging Face and all the tools it provides.
+# Huggingface Tutorial
+
+This is a tutorial I wrote for my club, I2. I figured it might be able to help
+some people out! Thanks for reading! (You can download the original .ipynb
+notebook [here](/assets/hf-tutorial.ipynb).)
 
 \- Carter Swartout, I2
+
+# What is this notebook about?
+Hugging Face is a popular library and resouce for training and using AI models. While it has many valuable resources, it can be extremely difficult to use. This notebook aims to serve as an introduction to Hugging Face and all the tools it provides.
 
 # Setup
 
