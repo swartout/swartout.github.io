@@ -20,59 +20,6 @@ You're going to need to have a Hugging Face account. If you don't have one alrea
 !pip install datasets
 ```
 
-    Requirement already satisfied: transformers in /Users/csw/.pyenv/versions/3.8.16/lib/python3.8/site-packages (4.25.1)
-    Requirement already satisfied: filelock in /Users/csw/.pyenv/versions/3.8.16/lib/python3.8/site-packages (from transformers) (3.9.0)
-    Requirement already satisfied: huggingface-hub<1.0,>=0.10.0 in /Users/csw/.pyenv/versions/3.8.16/lib/python3.8/site-packages (from transformers) (0.11.1)
-    Requirement already satisfied: tokenizers!=0.11.3,<0.14,>=0.11.1 in /Users/csw/.pyenv/versions/3.8.16/lib/python3.8/site-packages (from transformers) (0.13.2)
-    Requirement already satisfied: numpy>=1.17 in /Users/csw/.pyenv/versions/3.8.16/lib/python3.8/site-packages (from transformers) (1.24.1)
-    Requirement already satisfied: requests in /Users/csw/.pyenv/versions/3.8.16/lib/python3.8/site-packages (from transformers) (2.28.2)
-    Requirement already satisfied: regex!=2019.12.17 in /Users/csw/.pyenv/versions/3.8.16/lib/python3.8/site-packages (from transformers) (2022.10.31)
-    Requirement already satisfied: packaging>=20.0 in /Users/csw/.pyenv/versions/3.8.16/lib/python3.8/site-packages (from transformers) (23.0)
-    Requirement already satisfied: tqdm>=4.27 in /Users/csw/.pyenv/versions/3.8.16/lib/python3.8/site-packages (from transformers) (4.64.1)
-    Requirement already satisfied: pyyaml>=5.1 in /Users/csw/.pyenv/versions/3.8.16/lib/python3.8/site-packages (from transformers) (6.0)
-    Requirement already satisfied: typing-extensions>=3.7.4.3 in /Users/csw/.pyenv/versions/3.8.16/lib/python3.8/site-packages (from huggingface-hub<1.0,>=0.10.0->transformers) (4.4.0)
-    Requirement already satisfied: idna<4,>=2.5 in /Users/csw/.pyenv/versions/3.8.16/lib/python3.8/site-packages (from requests->transformers) (3.4)
-    Requirement already satisfied: charset-normalizer<4,>=2 in /Users/csw/.pyenv/versions/3.8.16/lib/python3.8/site-packages (from requests->transformers) (2.1.1)
-    Requirement already satisfied: certifi>=2017.4.17 in /Users/csw/.pyenv/versions/3.8.16/lib/python3.8/site-packages (from requests->transformers) (2022.12.7)
-    Requirement already satisfied: urllib3<1.27,>=1.21.1 in /Users/csw/.pyenv/versions/3.8.16/lib/python3.8/site-packages (from requests->transformers) (1.26.14)
-    
-    [1m[[0m[34;49mnotice[0m[1;39;49m][0m[39;49m A new release of pip is available: [0m[31;49m23.0[0m[39;49m -> [0m[32;49m23.0.1[0m
-    [1m[[0m[34;49mnotice[0m[1;39;49m][0m[39;49m To update, run: [0m[32;49mpip install --upgrade pip[0m
-    Requirement already satisfied: datasets in /Users/csw/.pyenv/versions/3.8.16/lib/python3.8/site-packages (2.8.0)
-    Requirement already satisfied: pyarrow>=6.0.0 in /Users/csw/.pyenv/versions/3.8.16/lib/python3.8/site-packages (from datasets) (10.0.1)
-    Requirement already satisfied: huggingface-hub<1.0.0,>=0.2.0 in /Users/csw/.pyenv/versions/3.8.16/lib/python3.8/site-packages (from datasets) (0.11.1)
-    Requirement already satisfied: xxhash in /Users/csw/.pyenv/versions/3.8.16/lib/python3.8/site-packages (from datasets) (3.2.0)
-    Requirement already satisfied: packaging in /Users/csw/.pyenv/versions/3.8.16/lib/python3.8/site-packages (from datasets) (23.0)
-    Requirement already satisfied: pyyaml>=5.1 in /Users/csw/.pyenv/versions/3.8.16/lib/python3.8/site-packages (from datasets) (6.0)
-    Requirement already satisfied: dill<0.3.7 in /Users/csw/.pyenv/versions/3.8.16/lib/python3.8/site-packages (from datasets) (0.3.6)
-    Requirement already satisfied: requests>=2.19.0 in /Users/csw/.pyenv/versions/3.8.16/lib/python3.8/site-packages (from datasets) (2.28.2)
-    Requirement already satisfied: tqdm>=4.62.1 in /Users/csw/.pyenv/versions/3.8.16/lib/python3.8/site-packages (from datasets) (4.64.1)
-    Requirement already satisfied: multiprocess in /Users/csw/.pyenv/versions/3.8.16/lib/python3.8/site-packages (from datasets) (0.70.14)
-    Requirement already satisfied: fsspec[http]>=2021.11.1 in /Users/csw/.pyenv/versions/3.8.16/lib/python3.8/site-packages (from datasets) (2023.1.0)
-    Requirement already satisfied: responses<0.19 in /Users/csw/.pyenv/versions/3.8.16/lib/python3.8/site-packages (from datasets) (0.18.0)
-    Requirement already satisfied: aiohttp in /Users/csw/.pyenv/versions/3.8.16/lib/python3.8/site-packages (from datasets) (3.8.3)
-    Requirement already satisfied: pandas in /Users/csw/.pyenv/versions/3.8.16/lib/python3.8/site-packages (from datasets) (1.5.3)
-    Requirement already satisfied: numpy>=1.17 in /Users/csw/.pyenv/versions/3.8.16/lib/python3.8/site-packages (from datasets) (1.24.1)
-    Requirement already satisfied: multidict<7.0,>=4.5 in /Users/csw/.pyenv/versions/3.8.16/lib/python3.8/site-packages (from aiohttp->datasets) (6.0.4)
-    Requirement already satisfied: frozenlist>=1.1.1 in /Users/csw/.pyenv/versions/3.8.16/lib/python3.8/site-packages (from aiohttp->datasets) (1.3.3)
-    Requirement already satisfied: yarl<2.0,>=1.0 in /Users/csw/.pyenv/versions/3.8.16/lib/python3.8/site-packages (from aiohttp->datasets) (1.8.2)
-    Requirement already satisfied: attrs>=17.3.0 in /Users/csw/.pyenv/versions/3.8.16/lib/python3.8/site-packages (from aiohttp->datasets) (22.2.0)
-    Requirement already satisfied: aiosignal>=1.1.2 in /Users/csw/.pyenv/versions/3.8.16/lib/python3.8/site-packages (from aiohttp->datasets) (1.3.1)
-    Requirement already satisfied: async-timeout<5.0,>=4.0.0a3 in /Users/csw/.pyenv/versions/3.8.16/lib/python3.8/site-packages (from aiohttp->datasets) (4.0.2)
-    Requirement already satisfied: charset-normalizer<3.0,>=2.0 in /Users/csw/.pyenv/versions/3.8.16/lib/python3.8/site-packages (from aiohttp->datasets) (2.1.1)
-    Requirement already satisfied: typing-extensions>=3.7.4.3 in /Users/csw/.pyenv/versions/3.8.16/lib/python3.8/site-packages (from huggingface-hub<1.0.0,>=0.2.0->datasets) (4.4.0)
-    Requirement already satisfied: filelock in /Users/csw/.pyenv/versions/3.8.16/lib/python3.8/site-packages (from huggingface-hub<1.0.0,>=0.2.0->datasets) (3.9.0)
-    Requirement already satisfied: urllib3<1.27,>=1.21.1 in /Users/csw/.pyenv/versions/3.8.16/lib/python3.8/site-packages (from requests>=2.19.0->datasets) (1.26.14)
-    Requirement already satisfied: idna<4,>=2.5 in /Users/csw/.pyenv/versions/3.8.16/lib/python3.8/site-packages (from requests>=2.19.0->datasets) (3.4)
-    Requirement already satisfied: certifi>=2017.4.17 in /Users/csw/.pyenv/versions/3.8.16/lib/python3.8/site-packages (from requests>=2.19.0->datasets) (2022.12.7)
-    Requirement already satisfied: pytz>=2020.1 in /Users/csw/.pyenv/versions/3.8.16/lib/python3.8/site-packages (from pandas->datasets) (2022.7.1)
-    Requirement already satisfied: python-dateutil>=2.8.1 in /Users/csw/.pyenv/versions/3.8.16/lib/python3.8/site-packages (from pandas->datasets) (2.8.2)
-    Requirement already satisfied: six>=1.5 in /Users/csw/.pyenv/versions/3.8.16/lib/python3.8/site-packages (from python-dateutil>=2.8.1->pandas->datasets) (1.16.0)
-    
-    [1m[[0m[34;49mnotice[0m[1;39;49m][0m[39;49m A new release of pip is available: [0m[31;49m23.0[0m[39;49m -> [0m[32;49m23.0.1[0m
-    [1m[[0m[34;49mnotice[0m[1;39;49m][0m[39;49m To update, run: [0m[32;49mpip install --upgrade pip[0m
-
-
 # Basics of HuggingFace
 
 (IMO) Hugging Face serves two tasks: storage of AI resouces (models, tokenizers, datasets) and a library of tools for training/using AI models. These resources take the form of a Github-like repository service (the HF Hub) in addition to libraries.
@@ -106,14 +53,6 @@ from transformers import pipeline
 pipe = pipeline("text-classification") # text-classification is the task
 pipe(['Wow, this notebook is amazing!', 'I hate self-referential jokes!']) # inference
 ```
-
-    No model was supplied, defaulted to distilbert-base-uncased-finetuned-sst-2-english and revision af0f99b (https://huggingface.co/distilbert-base-uncased-finetuned-sst-2-english).
-    Using a pipeline without specifying a model name and revision in production is not recommended.
-
-
-
-    Downloading:   0%|          | 0.00/268M [00:00<?, ?B/s]
-
 
 There's a couple things to take note of:
 
