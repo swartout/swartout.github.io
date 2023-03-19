@@ -203,9 +203,11 @@ We then concatenate the head outputs into one tensor of shape `(h, T, d_model / 
 
 ![self-attention block](/assets/GPT/GPT_00061.jpg)
 
-We're almost done! Now that we have a good idea how masked self-attention works, all that's left in a decoder block is the feed-forward neural net. This is just two linac layers with a nonlinearity in between (the width of the layers is a hyperparameter one can choose).
+We're almost done! Now that we have a good idea how masked self-attention works, all that's left in a decoder block is the feed-forward neural net. This is just two linear layers with a nonlinearity in between (the width of the layers is a hyperparameter one can choose).
 
 This block is what's repeated throughout GPT - getting this means you're almost the entire way there to understanding the architecture!
+
+![full model](/assets/GPT/GPT_00062.jpg)
 
 There's just two finishing points I'd like to make:
 
