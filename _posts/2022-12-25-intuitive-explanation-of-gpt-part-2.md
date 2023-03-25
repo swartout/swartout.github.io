@@ -209,6 +209,24 @@ This block is what's repeated throughout GPT - getting this means you're almost 
 
 ![full model](/assets/GPT/GPT_00062.jpg)
 
+At the end of the model is a linear layer with shape `(d_model, d_vocab)`. The output `(B, T, d_vocab)` of this layer are the unnormalized probabilities of the next token. Each possible token is given a score for its likelyhood of being next, this is the `d_vocab`. Additionally, notice that these next-token scores are generated for every token in the input. This means that for every input token, the model predicts the next token - even if the next token is given in the prompt. For generation we typically only care about the final input token's next-token predictions because we care about predicting tokens we aren't given.
+
+Here's a few quick psuedocode examples, given the input sentence: *"The quick brown fox jumps over the lazy dog"*. As this is the only example in the batch, I'll drop the batch dimension so the output will be of size: `(T, d_vocab)`.
+
+`output = model(tokenized_input) # run the input through the model`
+
+`print(output[-1])`
+
+This should print the vector of length `d_vocab` containing the likelyhoods for each word in the vocab being the next word following the entire input sentence.
+
+`print(output[0])`
+
+This should print the score vector (similar to above), but for the word following *"The"*, which is the first word in the input.
+
+`print(output[2])`
+
+Like the above two examples, this prints the score vector for the word following the input prefix: *"The quick brown"* - a good model might predict *"fox"*.
+
 There's just two finishing points I'd like to make:
 
 1) Instead of computing the output of each head and then concatenating them, this whole operation can efficiently be done using - you guessed it - matrix multiplication and reshaping. This process is left as an exercise to the reader (or [Google](https://github.com/karpathy/minGPT/blob/master/mingpt/model.py) it).
