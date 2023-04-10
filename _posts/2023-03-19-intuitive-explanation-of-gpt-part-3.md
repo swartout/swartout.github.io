@@ -8,7 +8,7 @@ Hi! In this post I'll finish up explaining GPT models, covering training and mas
 
 ## Training
 
-Let's take a look at how GPT-style models are trained. Supervised learning entails an example (x), and target (y). In the case of image classification, an example might be a photo of an animal and the target would be the label of the photo, say cat or dog.
+Let's take a look at how GPT-style models are trained. Supervised learning typically entails an example (x), and target (y). In the case of image classification, an example might be a photo of an animal and the target would be the label of the photo, say cat or dog.
 
 GPT models are trained on textual data, often pretrained using vast amounts of the internet. Unlike image classification, there doesn't seem to be as natural of an example and target for raw text. Using our intuition from earlier, we can think of the autocomplete analogy from earlier. Given some start of a message, autocomplete will output a predicted next word. If we have a message, say: *"The quick brown fox jumps over the lazy dog"*, we could evaluate differerent autocomplete engines by typing in different-length starts of the sentence and seeing if the actual next word is predicted. For the message we had, here's what I'd expect:
 
