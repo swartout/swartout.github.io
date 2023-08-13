@@ -1,4 +1,4 @@
-Hi! I'm Carter, a sophomore at the University of Washington studying CS!
+Hi! I'm Carter, a junior at the University of Washington studying CS!
 
 This blog is meant to record my various learnings, scattered ideas, and
 (hopefully) explaining concepts that I've found difficult.
